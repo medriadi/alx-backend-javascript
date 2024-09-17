@@ -5,6 +5,10 @@ import readDatabase from '../utils';
  */
 const VALID_MAJORS = ['CS', 'SWE'];
 
+/**
+ * Contains the student-related route handlers.
+ * @class StudentsController
+ */
 class StudentsController {
   static getAllStudents(request, response) {
     const dataPath = process.argv.length > 2 ? process.argv[2] : '';
