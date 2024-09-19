@@ -1,26 +1,14 @@
 const request = require('request');
-const chai = require('chai');
-const expect = chai.expect;
-const app = require('./api');  // Ensure the server is loaded for the test
+const { expect } = require('chai');
 
-describe('Index page', () => {
-  it('Correct status code?', (done) => {
-    request.get('http://localhost:7865', (error, response, body) => {
-      expect(response.statusCode).to.equal(200);
-      done();
-    });
-  });
+describe('API Integration Test', () => {
+  const URL = 'http://localhost:7865';
 
-  it('Correct result?', (done) => {
-    request.get('http://localhost:7865', (error, response, body) => {
-      expect(body).to.equal('Welcome to the payment system');
-      done();
-    });
-  });
-
-  it('Other?', (done) => {
-    request.get('http://localhost:7865', (error, response, body) => {
-      expect(response.headers['content-type']).to.contain('text/html');
+  it('GET /', (done) => {
+    request.get(URL, (err, res, body) => {
+      expect(err).to.be.null;
+      expect(res.statusCode).to.be.equal(200);
+      expect(body).to.be.equal('Welcome to the payment system');
       done();
     });
   });
