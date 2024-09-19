@@ -1,56 +1,38 @@
 const request = require('request');
-const chai = require('chai');
-const expect = chai.expect;
-const app = require('./api');  // Ensure the server is loaded for the test
+const { expect } = require('chai');
 
-describe('Index page', () => {
-  it('Correct status code?', (done) => {
-    request.get('http://localhost:7865', (error, response, body) => {
-      expect(response.statusCode).to.equal(200);
+describe('API Integration Test', () => {
+  const URL = 'http://localhost:7865';
+
+  it('GET /', (done) => {
+    request.get(URL, (_err, res, body) => {
+      expect(res.statusCode).to.be.equal(200);
+      expect(body).to.be.equal('Welcome to the payment system');
       done();
     });
   });
 
-  it('Correct result?', (done) => {
-    request.get('http://localhost:7865', (error, response, body) => {
-      expect(body).to.equal('Welcome to the payment system');
+  it('GET /cart/:id when it is a valid positive number', (done) => {
+    request.get(`${URL}/cart/1`, (err, res, body) => {
+      expect(err).to.be.null;
+      expect(res.statusCode).to.be.equal(200);
+      expect(body).to.be.equal('Payment methods for cart 1');
       done();
     });
   });
 
-  it('Other?', (done) => {
-    request.get('http://localhost:7865', (error, response, body) => {
-      expect(response.headers['content-type']).to.contain('text/html');
-      done();
-    });
-  });
-});
-
-describe('Cart page', () => {
-  it('Correct status code when :id is a number?', (done) => {
-    request.get('http://localhost:7865/cart/12', (error, response, body) => {
-      expect(response.statusCode).to.equal(200);
+  it('GET /cart/:id when it is a negative number', (done) => {
+    request.get(`${URL}/cart/-1`, (err, res, _body) => {
+      expect(err).to.be.null;
+      expect(res.statusCode).to.be.equal(404);
       done();
     });
   });
 
-  it('Correct result when :id is a number?', (done) => {
-    request.get('http://localhost:7865/cart/12', (error, response, body) => {
-      expect(body).to.equal('Payment methods for cart 12');
-      done();
-    });
-  });
-
-  it('Correct status code when :id is NOT a number?', (done) => {
-    request.get('http://localhost:7865/cart/hello', (error, response, body) => {
-      expect(response.statusCode).to.equal(404);
-      done();
-    });
-  });
-
-  it('Correct result when :id is NOT a number?', (done) => {
-    request.get('http://localhost:7865/cart/hello', (error, response, body) => {
-      expect(body).to.contain('Cannot GET /cart/hello');
+  it('GET /cart/:id when it is NaN', (done) => {
+    request.get(`${URL}/cart/abc`, (err, res, _body) => {
+      expect(err).to.be.null;
+      expect(res.statusCode).to.be.equal(404);
       done();
     });
   });
